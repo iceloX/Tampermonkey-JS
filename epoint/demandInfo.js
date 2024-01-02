@@ -47,7 +47,7 @@
 
 
                  var infoButton = document.createElement('a');
-                 infoButton.innerHTML = '<a class="mini-button mini-state-default mini-corner-all mini-btn-success mr10" href="javascript:void(0)" onclick="showConfig()"><span class="mini-button-text">项目信息汇总</span></a>';
+                 infoButton.innerHTML = '<a class="mini-button mini-state-default mini-corner-all mini-btn-success mr10" href="javascript:void(0)"  onclick="showConfig();"><span class="mini-button-text">项目信息汇总</span></a>';
                  // document.body.appendChild(infoButton);
 
                  var faqlookElement = document.querySelector('#faqlook');
@@ -61,13 +61,6 @@
                  }
 
 
-                 let jss = "";
-                 jss += "<script>function showConfig() {";
-                 jss += " alert('哈哈')";
-                 jss += "}</script>";
-                 $("body").append(saveJss);
-
-
             } catch (e) {
                 console.log('Unable to parse response as JSON:', xhr.response);
             }
@@ -77,4 +70,16 @@
     };
     }
 
+})();
+
+
+(function () {
+    'use strict';
+
+    // 绿化设定按钮点击事件
+    let jss = "";
+    jss += "<script>function showConfig() {";
+    jss += "alert('脚本信息');";
+    jss += "}</script>";
+    $("body").append(jss);
 })();
