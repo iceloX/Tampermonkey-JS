@@ -6,6 +6,8 @@
 // @author       icelo.org
 // @match        https://oa.epoint.com.cn/epointoa9/frame/pages/basic/communication/waithandle/*
 // @match        https://oa.epoint.com.cn/dailyreportmanage/pages/dailyrecord/dailyrecordaddv2/gzrz/gzrzcontent*
+// @updateURL    https://raw.githubusercontent.com/iceloX/Tampermonkey-JS/master/epoint/zbgen.js
+// @downloadURL  https://raw.githubusercontent.com/iceloX/Tampermonkey-JS/master/epoint/zbgen.js
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=epoint.com.cn
 // @grant        none
 // ==/UserScript==
