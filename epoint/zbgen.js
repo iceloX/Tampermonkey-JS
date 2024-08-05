@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         小组周报生成器
 // @namespace    http://tampermonkey.net/
-// @version      2024-07-30
+// @version      2024-08-05
 // @description  try to take over the world!
 // @author       icelo.org
 // @match        https://oa.epoint.com.cn/epointoa9/frame/pages/basic/communication/waithandle/*
