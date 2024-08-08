@@ -2,33 +2,83 @@
 // @name         小组周报生成器
 // @namespace    http://tampermonkey.net/
 // @version      2024-08-05
-// @description  try to take over the world!
+// @description  小猪肘饱
 // @author       icelo.org
 // @match        https://oa.epoint.com.cn/epointoa9/frame/pages/basic/communication/waithandle/*
 // @match        https://oa.epoint.com.cn/dailyreportmanage/pages/dailyrecord/dailyrecordaddv2/gzrz/gzrzcontent*
-// @updateURL    https://raw.githubusercontent.com/iceloX/Tampermonkey-JS/master/epoint/zbgen.js
-// @downloadURL  https://raw.githubusercontent.com/iceloX/Tampermonkey-JS/master/epoint/zbgen.js
+// @match        https://oa.epoint.com.cn/dailyreportmanage/pages/dailyrecord/dailyrecordaddv2/gzrz/fydetail_edit?*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=epoint.com.cn
 // @grant        none
+// @license      MIT
+// @downloadURL https://update.greasyfork.org/scripts/502698/%E5%B0%8F%E7%BB%84%E5%91%A8%E6%8A%A5%E7%94%9F%E6%88%90%E5%99%A8.user.js
+// @updateURL https://update.greasyfork.org/scripts/502698/%E5%B0%8F%E7%BB%84%E5%91%A8%E6%8A%A5%E7%94%9F%E6%88%90%E5%99%A8.meta.js
 // ==/UserScript==
 
 (function() {
     'use strict';
      // 等待页面加载完成
-     var url = window.location.href;
+    var url = window.location.href;
     console.log(url);
     if(url.startsWith('https://oa.epoint.com.cn/epointoa9/frame/pages/basic/communication/waithandle/')) {
         var NewNode = document.createElement('input');
         NewNode.setAttribute("type",'button');
         NewNode.setAttribute('value','生成周报');
         document.getElementsByClassName('fui-toolbar')[0].appendChild(NewNode);
-        NewNode.addEventListener("click", delay);
+        NewNode.addEventListener("click", gen);
 
     }
 
-    else  if(url.startsWith('https://oa.epoint.com.cn/dailyreportmanage/pages/dailyrecord/dailyrecordaddv2/gzrz/gzrzcontentold')){
+    else if(url.startsWith('https://oa.epoint.com.cn/dailyreportmanage/pages/dailyrecord/dailyrecordaddv2/gzrz/fydetail_edit')) {
+        var cbButtonNode = document.createElement('input');
+        cbButtonNode.setAttribute("type",'button');
+        cbButtonNode.setAttribute('value','转换餐补');
+        document.getElementsByClassName('fui-toolbar')[0].appendChild(cbButtonNode);
+        cbButtonNode.addEventListener("click", cb);
+    }
+
+    else if(url.startsWith('https://oa.epoint.com.cn/dailyreportmanage/pages/dailyrecord/dailyrecordaddv2/gzrz/gzrzcontentold')){
         var taskGrid = mini.get('taskGrid');
         var columns = taskGrid.columns;
+
+        //展示任务评审工时
+        columns.insert(12,{
+						width : 50,
+						headerAlign : "center",
+						align : "center",
+						header : '标准任务工时（self）',
+                        field : 'expectcosted',
+            renderer:function(e){
+                //职级为10的话要除1.5才是实际计划工时
+                return e.value/1.27;
+            }
+		});
+
+
+        columns.insert(13,{
+						width : 50,
+						headerAlign : "center",
+						align : "center",
+						header : '填写情况',
+                        field : 'expectcosted',
+            renderer:function(e){
+                var costWork = e.record.realworkdays;
+                var costWorkValue = costWork==""?0:costWork;
+                var realWorkValue = e.value/1.27;
+                if(realWorkValue > costWorkValue){
+                    // 还能用
+                    return "🙂";
+                }
+                else if(realWorkValue == costWorkValue){
+                    // 刚刚好
+                    return "😑"
+                }
+                else {
+                    // 超了
+                    return "😭";
+                }
+            }
+		});
+
 
         //新增勾选框
         columns.push({
@@ -49,11 +99,11 @@
             targetElement.parentNode.appendChild(rzzbButton);
         }
 
-        rzzbButton.addEventListener("click", rzdelay);
+        rzzbButton.addEventListener("click", rzgen);
     }
 
 
-    function rzdelay(){
+    function rzgen(){
        var datagrid = mini.get('taskGrid');
        var ids = datagrid.getSelectedIds();
 
@@ -75,7 +125,7 @@
     }
 
     // 定义delay函数
-    function delay() {
+    function gen() {
        var datagrid = mini.get('datagrid');
        var ids = datagrid.getSelectedIds();
 
@@ -102,6 +152,17 @@
         }
     }
 
+    // 餐补
+    function cb() {
+        var btlx = document.getElementById('bxTypeName$text');
+        btlx.removeAttribute('readonly')
+        mini.get("bxType").setValue('010206');
+        mini.get("bxTypeName").setValue('加班餐补贴');
+        mini.get("beizhu").setValue('加班晚餐(25元)');
+        save()
+    }
+
+    // 复制到粘贴板
     async function copyContent(content) {
         try {
             console.log(content)
